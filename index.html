@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Live2d Cubism 2</title>
+        <meta charset="utf-8">
+        <link rel="icon" href="avatar.png">
+        <style>
+            .live2d {
+                position: fixed;
+                bottom : 0;
+                left : 200px;
+            }
+            body {
+                background-size: contain;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                width: 100vw;
+            }
+            
+            /* 添加鼠标滚轮缩放功能 */
+            body {
+                cursor: url('sb/1.ico'), auto;
+            }
+            
+            /* 鼠标跟随图片样式 */
+            #follow-mouse {
+                position: absolute;
+                pointer-events: none;
+                z-index: 10;
+                width: 50px;
+                height: 50px;
+                opacity: 0;
+                transition: opacity 0.3s, transform 0.3s;
+                background-image: url('sb/2.ico');
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translate(0, 0) rotate(0deg); }
+                25% { transform: translate(2px, -2px) rotate(2deg); }
+                50% { transform: translate(-2px, 2px) rotate(-2deg); }
+                75% { transform: translate(2px, 2px) rotate(2deg); }
+            }
+            
+            @keyframes explode {
+                0% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(2); opacity: 0; }
+            }
+        </style>
+    </head>
+    <body>
+        <div style="position:fixed;top:0;background-color: white;">
+            <button id="Change" class="active">换人</button>
+            <button id="texure" class="active">换衣服</button>
+            <button id="changeBg" class="active">切换背景</button>
+            <input type="range" id="bgScaleSlider" min="10" max="500" value="100" class="active">
+            <text>当前：模型编号 </text><text id="model_id"></text><text>；衣服编号 </text><text id="texure_id"></text>
+            <input type="number" id="model" placeholder="模型编号">
+            <input type="number" id="Texure" placeholder="衣服编号">
+            <button onclick="JumpToModel()">跳转</button>
+            <a href="live2d_3">Live2d Cubism 3</a>
+            <a target="_blank" href="https://github.com/imuncle/live2d">Github</a>
+        </div>
+        <ol id="model_info" style="margin-top:30px ;"></ol>
+        <canvas class="live2d" id="live2d" width="300" height="800"></canvas>
+        <div id="follow-mouse"></div>
+        <div id="music-player" style="position: fixed; right: 20px; top: 20px; width: 150px; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;">
+            <h3 style="margin: 0 0 10px 0; font-size: 14px;">音乐播放器</h3>
+            <button onclick="musicPlayer.playPause()" style="font-size: 12px;">播放/暂停</button>
+            <button onclick="musicPlayer.prevTrack()" style="font-size: 12px;">上一首</button>
+            <button onclick="musicPlayer.nextTrack()" style="font-size: 12px;">下一首</button>
+            <div style="margin-top: 10px;">
+                <span style="font-size: 12px;">音量:</span>
+                <input type="range" min="0" max="1" step="0.1" value="1" oninput="musicPlayer.setVolume(this.value)" style="width: 100px;">
+            </div>
+        </div>
+        
+        <div id="video-player" style="position: fixed; right: 20px; bottom: 20px; width: 300px; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;">
+            <video id="video" width="300" controls></video>
+            <div style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
+                <span id="video-name" style="font-size: 12px;">正在加载视频...</span>
+            </div>
+            <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                <button id="video-play-pause" style="font-size: 12px;">播放/暂停</button>
+                <button id="video-prev" style="font-size: 12px;">上一个</button>
+                <button id="video-next" style="font-size: 12px;">下一个</button>
+            </div>
+        </div>
+    </body>
+    <script src="js/LAppDefine.js"></script>
+    <script src="js/videoPlayer.js"></script>
+    <script src="js/live2d.js"></script>
+    <script src="js/musicPlayer.js"></script>
+    <script>
+
+
+        var current_model_id = 1;
+        var current_texure_id = 1;
+        document.getElementById("model_id").innerHTML = current_model_id;
+        document.getElementById("texure_id").innerHTML = current_texure_id;
+        function JumpToModel() {
+            if(document.getElementById("model").value == "") document.getElementById("model").value = "1";
+            if(document.getElementById("Texure").value == "") document.getElementById("Texure").value = "1";
+            current_model_id = parseInt(document.getElementById("model").value);
+            current_texure_id = parseInt(document.getElementById("Texure").value);
+            var model_id = current_model_id - 1;
+            var texure_id = current_texure_id - 1;
+            if(model_id > LAppDefine.MODELS.length - 1) {
+                model_id = LAppDefine.MODELS.length - 1;
+                texure_id = 0;
+            } else if(texure_id > LAppDefine.MODELS[model_id].length - 1) {
+                texure_id = LAppDefine.MODELS[model_id].length - 1;
+            }
+            loadlive2d(LAppDefine.CANVAS_ID, LAppDefine.MODELS[model_id][texure_id]);
+            document.getElementById("model_id").innerHTML = current_model_id;
+            document.getElementById("texure_id").innerHTML = current_texure_id;
+        }
+        btnChangeExure = document.getElementById(LAppDefine.TEXURE_BUTTON_ID);
+        btnChangeExure.addEventListener('click', function(e) {
+            current_texure_id++;
+            if(current_texure_id > LAppDefine.MODELS[current_model_id-1].length) current_texure_id = 1;
+            document.getElementById("model_id").innerHTML = current_model_id;
+            document.getElementById("texure_id").innerHTML = current_texure_id;
+            loadlive2d(LAppDefine.CANVAS_ID, LAppDefine.MODELS[current_model_id-1][current_texure_id-1]);
+        })
+        btnChangeModel = document.getElementById(LAppDefine.BUTTON_ID);
+        btnChangeModel.addEventListener("click", function(e) {
+            current_model_id++;
+            current_texure_id = 1;
+            if(current_model_id > LAppDefine.MODELS.length) current_model_id = 1;
+            loadlive2d(LAppDefine.CANVAS_ID, LAppDefine.MODELS[current_model_id-1][current_texure_id-1]);
+            document.getElementById("model_id").innerHTML = current_model_id;
+            document.getElementById("texure_id").innerHTML = current_texure_id;
+        })
+                var bgImages = [];
+        var currentBgIndex = 0;
+        
+        // 加载bg文件夹中的所有图片
+        fetch('bg/')
+            .then(response => response.text())
+            .then(text => {
+                const parser = new DOMParser();
+                const html = parser.parseFromString(text, 'text/html');
+                const links = html.querySelectorAll('a');
+                
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.match(/\.(jpe?g|png|gif)$/i)) {
+                        bgImages.push('bg/' + href);
+                    }
+                });
+                
+                if (bgImages.length > 0) {
+                    document.body.style.backgroundImage = `url('${bgImages[0]}')`;
+                }
+            });
+        
+        document.getElementById('changeBg').addEventListener('click', function() {
+            if (bgImages.length > 0) {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * bgImages.length);
+                } while (bgImages.length > 1 && newIndex === currentBgIndex);
+                currentBgIndex = newIndex;
+                document.body.style.backgroundImage = `url('${bgImages[currentBgIndex]}')`;
+            }
+        });
+        
+        loadlive2d("live2d", "model/22/model.default.json");
+        
+        // 创建飘落的luo.ico图片
+        function createFallingIcons() {
+            const container = document.body;
+            
+            for (let i = 0; i < 10; i++) {
+                const icon = document.createElement('img');
+                icon.src = 'luo.ico';
+                icon.style.position = 'fixed';
+                icon.style.width = '50px';
+                icon.style.height = '50px';
+                icon.style.zIndex = '5';
+                icon.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+                icon.style.top = '-50px';
+                
+                // 随机动画参数
+                const duration = 5000 + Math.random() * 5000; // 5-10秒
+                const delay = Math.random() * 3000; // 0-3秒延迟
+                const xMovement = (Math.random() - 0.5) * 200; // -100到100像素的水平移动
+                
+                icon.style.transition = `all ${duration/1000}s linear ${delay/1000}s`;
+                container.appendChild(icon);
+                
+                // 触发动画
+                setTimeout(() => {
+                    icon.style.top = window.innerHeight + 'px';
+                    icon.style.left = (parseInt(icon.style.left) + xMovement) + 'px';
+                    
+                    // 动画结束后移除元素
+                    setTimeout(() => {
+                        icon.remove();
+                    }, duration);
+                }, 10);
+            }
+        }
+        
+        // 页面加载时执行一次
+        window.addEventListener('load', createFallingIcons);
+        
+
+        
+        var bgScale = 1;
+        var minScale = 0.1;
+        var maxScale = 5;
+        var scaleStep = 0.1;
+        
+        document.getElementById('bgScaleSlider').addEventListener('input', function(e) {
+            bgScale = e.target.value / 100;
+            document.body.style.backgroundSize = (bgScale * 100) + '%';
+            console.log('背景缩放比例:', bgScale);
+        });
+        
+        // 鼠标跟随效果
+        let mouseX = 0, mouseY = 0;
+        let lastMoveTime = 0;
+        const followMouse = document.getElementById('follow-mouse');
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            lastMoveTime = Date.now();
+            
+            if (followMouse.style.opacity === '0') {
+                followMouse.style.opacity = '1';
+                followMouse.style.animation = 'float 0.5s infinite alternate';
+            }
+            
+            // 设置固定偏移到右下方
+            const offsetX = 40;  // 向右偏移40px
+            const offsetY = 40;  // 向下偏移40px
+            
+            followMouse.style.left = (mouseX + offsetX) + 'px';
+            followMouse.style.top = (mouseY + offsetY) + 'px';
+            
+            // 检查鼠标是否停止移动
+            clearTimeout(window.mouseStopTimer);
+            window.mouseStopTimer = setTimeout(() => {
+                if (Date.now() - lastMoveTime > 300) {
+                    followMouse.style.animation = 'explode 0.5s forwards';
+                    setTimeout(() => {
+                        followMouse.style.opacity = '0';
+                        followMouse.style.animation = '';
+                    }, 500);
+                }
+            }, 300);
+        });
+        
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    bgScale = Math.min(bgScale + scaleStep, maxScale);
+                } else {
+                    bgScale = Math.max(bgScale - scaleStep, minScale);
+                }
+                document.body.style.backgroundSize = (bgScale * 100) + '%';
+            }
+        });
+        
+        // 添加键盘事件监听控制背景位置
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            const currentPos = document.body.style.backgroundPosition.split(' ');
+            let x = currentPos[0] ? parseInt(currentPos[0]) || 0 : 0;
+            let y = currentPos[1] ? parseInt(currentPos[1]) || 0 : 0;
+            
+            switch(key) {
+                case 'w': y -= 10; break;
+                case 's': y += 10; break;
+                case 'a': x -= 10; break;
+                case 'd': x += 10; break;
+                default: return;
+            }
+            
+            document.body.style.backgroundPosition = `${x}px ${y}px`;
+        });
+
+    </script>
+</html>
