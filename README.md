@@ -59,6 +59,8 @@ dash.cloudflare.com 注册一个cf账号解析域名 注册完cf点注册域，�
 
 ![image](https://github.com/user-attachments/assets/ba33e92e-f6a9-43f5-ad85-835bba6affe7)
 
+![image](https://github.com/user-attachments/assets/5d717f4b-25a1-4ed4-ad68-457dfb4f6f58)
+
 
 
 
