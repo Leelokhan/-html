@@ -1,6 +1,6 @@
 用ai做一个简单的网页给自己练练手
 
-实例：   https://live2d.honkai.ct8.pl/
+实例：   https://live2d.honkai.ct8.pl/  还有一个ai做的小游戏 http://dar.honkai.ct8.pl/ O(∩_∩)O~
 ![微信截图_20250423033407](https://github.com/user-attachments/assets/ff4e2c55-3b62-4ad0-9e96-d7a81c981413)
 为了不那么单调加入了live2d→ https://github.com/imuncle/live2d 这位大大的项目，我仓库里删除了大部分模型只留了几个用作测试，喜欢的可以去他的项目地址下载
 
