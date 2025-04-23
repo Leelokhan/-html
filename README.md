@@ -51,6 +51,9 @@ dash.cloudflare.com 注册一个cf账号解析域名 注册完cf点注册域，�
 代码我都加注释了的，修改应该都不难的，你可以打包回本地让ai帮你修改
 ![image](https://github.com/user-attachments/assets/f9ada10e-50f7-4fef-a58c-791056db0882)
 ![image](https://github.com/user-attachments/assets/ceaa3bcb-16d3-4429-91f3-18584da86180)![image](https://github.com/user-attachments/assets/5d25acf9-f7f8-4dbc-8b7a-74612900da03)
+.
+![image](https://github.com/user-attachments/assets/ba33e92e-f6a9-43f5-ad85-835bba6affe7)
+
 
 
 
