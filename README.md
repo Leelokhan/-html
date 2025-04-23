@@ -1,3 +1,5 @@
+用ai做一个简单的网页给自己练练手
+
 实例：   https://live2d.honkai.ct8.pl/
 ![微信截图_20250423033407](https://github.com/user-attachments/assets/ff4e2c55-3b62-4ad0-9e96-d7a81c981413)
 为了不那么单调加入了live2d→ https://github.com/imuncle/live2d 这位大大的项目，我仓库里删除了大部分模型只留了几个用作测试，喜欢的可以去他的项目地址下载
@@ -19,10 +21,9 @@
 
 ![image](https://github.com/user-attachments/assets/647d328e-dc62-450e-a397-9ecb07ac5106)
 
-      
-很简单这样打包下载然后解压到你服务器的域名文件夹里，b站有很多无需服务器的案例你们可以试试
+很简单这样打包下载然后解压到你服务器的域名文件夹里，不能保证直接丢进去就行，不是所有服务器都一样，我就测了自己有的.
 
-我这里用我之前注册的来测试一下
+我这里用我之前注册的serv00来测试一下
 
 准备工作
 
