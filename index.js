@@ -14,7 +14,7 @@ const DOMAIN = process.env.DOMAIN || 'vercel.562427418.xyz';       // 填写项�
 const AUTO_ACCESS = process.env.AUTO_ACCESS || true;      // 是否开启自动访问保活,false为关闭,true为开启,需同时填写DOMAIN变量
 const SUB_PATH = process.env.SUB_PATH || 'lee';            // 获取节点的订阅路径
 const NAME = process.env.NAME || 'vercel';                    // 节点名称
-const PORT = process.env.PORT || 31805;                     // http和ws服务端口
+const PORT = process.env.PORT || 3000;                     // http和ws服务端口
 
 const metaInfo = execSync(
   'curl -s https://speed.cloudflare.com/meta | awk -F\\" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
@@ -26,7 +26,7 @@ const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello, World\n');
   } else if (req.url === `/${SUB_PATH}`) {
-    const vlessURL = `vless://${UUID}@www.visa.com.tw:443?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
+    const vlessURL = `vless://${UUID}@www.visa.com.tw:2096?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
     
     const base64Content = Buffer.from(vlessURL).toString('base64');
 
