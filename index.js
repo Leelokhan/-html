@@ -11,7 +11,7 @@ const NEZHA_SERVER = process.env.NEZHA_SERVER || '';       // 哪吒v1填写形�
 const NEZHA_PORT = process.env.NEZHA_PORT || '';           // 哪吒v1没有此变量，v0的agent端口为{443,8443,2096,2087,2083,2053}其中之一时开启tls
 const NEZHA_KEY = process.env.NEZHA_KEY || '';             // v1的NZ_CLIENT_SECRET或v0的agent端口                
 const DOMAIN = process.env.DOMAIN || 'vercel.562427418.xyz';       // 填写项目域名或已反代的域名，不带前缀，建议填已反代的域名
-const AUTO_ACCESS = process.env.AUTO_ACCESS || false;      // 是否开启自动访问保活,false为关闭,true为开启,需同时填写DOMAIN变量
+const AUTO_ACCESS = process.env.AUTO_ACCESS || true;      // 是否开启自动访问保活,false为关闭,true为开启,需同时填写DOMAIN变量
 const SUB_PATH = process.env.SUB_PATH || 'sub';            // 获取节点的订阅路径
 const NAME = process.env.NAME || 'vercel';                    // 节点名称
 const PORT = process.env.PORT || 30120;                     // http和ws服务端口
@@ -26,7 +26,7 @@ const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello, World\n');
   } else if (req.url === `/${SUB_PATH}`) {
-    const vlessURL = `vless://${UUID}@www.visa.com.tw:2096?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
+    const vlessURL = `vless://${UUID}@www.visa.com.tw:8180?encryption=none&security=tls&sni=${DOMAIN}&type=ws&host=${DOMAIN}&path=%2F#${NAME}-${ISP}`;
     
     const base64Content = Buffer.from(vlessURL).toString('base64');
 
